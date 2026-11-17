@@ -10,10 +10,15 @@ public class ContaCorrente extends Conta {
     }
 
     @Override
-    public boolean sacar(double valor) {
-        if (!valorValido(valor) || valor > saldo + limiteChequeEspecial) return false;
+    public void sacar(double valor) throws ValorInvalidoException, SaldoInsuficienteException {
+        validarValorPositivo(valor);
+        if (valor > saldo + limiteChequeEspecial) {
+            throw new SaldoInsuficienteException(
+                "Saldo e limite insuficientes. Disponível para saque: " + dinheiro(saldo + limiteChequeEspecial)
+            );
+        }
         saldo -= valor;
-        return true;
+        registrarTransacao("Saque: -" + dinheiro(valor) + " | Saldo: " + dinheiro(saldo));
     }
 
     public double getLimiteChequeEspecial() { return limiteChequeEspecial; }
@@ -27,12 +32,12 @@ public class ContaCorrente extends Conta {
     }
 
     @Override
-    public void exibirSaldo() {
-        System.out.println("\n--- CONTA CORRENTE ---");
-        System.out.println("Titular: " + getTitular());
-        System.out.println("Número: " + getNumero());
-        System.out.println("Saldo: " + dinheiro(getSaldo()));
-        System.out.println("Cheque especial utilizado: " + dinheiro(getChequeEspecialUtilizado()));
-        System.out.println("Limite disponível: " + dinheiro(getLimiteDisponivel()));
+    public String getResumoDetalhes() {
+        return "Tipo: Conta Corrente\n" +
+               "Titular: " + getTitular() + "\n" +
+               "Número: " + getNumero() + "\n" +
+               "Saldo: " + dinheiro(getSaldo()) + "\n" +
+               "Cheque especial utilizado: " + dinheiro(getChequeEspecialUtilizado()) + "\n" +
+               "Limite disponível: " + dinheiro(getLimiteDisponivel());
     }
 }

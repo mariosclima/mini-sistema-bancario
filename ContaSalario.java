@@ -4,18 +4,21 @@ public class ContaSalario extends Conta {
     }
 
     @Override
-    public boolean sacar(double valor) {
-        if (!valorValido(valor) || valor > saldo) return false;
+    public void sacar(double valor) throws ValorInvalidoException, SaldoInsuficienteException {
+        validarValorPositivo(valor);
+        if (valor > saldo) {
+            throw new SaldoInsuficienteException("Saldo insuficiente na conta salário. Saldo atual: " + dinheiro(saldo));
+        }
         saldo -= valor;
-        return true;
+        registrarTransacao("Saque: -" + dinheiro(valor) + " | Saldo: " + dinheiro(saldo));
     }
 
     @Override
-    public void exibirSaldo() {
-        System.out.println("\n--- CONTA SALÁRIO ---");
-        System.out.println("Titular: " + getTitular());
-        System.out.println("Número: " + getNumero());
-        System.out.println("Saldo: " + dinheiro(getSaldo()));
-        System.out.println("Sem cheque especial e sem rendimento.");
+    public String getResumoDetalhes() {
+        return "Tipo: Conta Salário\n" +
+               "Titular: " + getTitular() + "\n" +
+               "Número: " + getNumero() + "\n" +
+               "Saldo: " + dinheiro(getSaldo()) + "\n" +
+               "Observação: Sem cheque especial e sem rendimento.";
     }
 }
